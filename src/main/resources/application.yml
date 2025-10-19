@@ -1,0 +1,43 @@
+server:
+  port: 8081  # Puerto diferente a Account Service (8082)
+
+# Configuración de Spring
+spring:
+  application:
+    name: customer-service  # Nombre del microservicio
+
+  # Configuración de base de datos reactiva
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/customer_db
+    username: bank_user
+    password: bank_password
+    pool:
+      initial-size: 10      # Conexiones iniciales
+      max-size: 20          # Máximo conexiones
+      validation-query: SELECT 1
+
+  # Configuración para ejecutar scripts SQL al inicio
+  sql:
+    init:
+      mode: always          # Ejecutar scripts siempre
+      schema-locations: classpath:schema.sql  # Script de esquema
+      data-locations: classpath:data.sql      # Script de datos
+
+# Configuración de logging
+logging:
+  level:
+    com.bank.customer: DEBUG    # Nuestro código en DEBUG
+    io.r2dbc.mysql: INFO        # Driver R2DBC en INFO
+    org.springframework.r2dbc: DEBUG  # R2DBC de Spring en DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Configuración de actuator (monitoreo)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics  # Endpoints expuestos
+  endpoint:
+    health:
+      show-details: always
