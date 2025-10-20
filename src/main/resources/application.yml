@@ -1,43 +1,55 @@
 server:
-  port: 8081  # Puerto diferente a Account Service (8082)
+  port: 8081
 
-# Configuración de Spring
 spring:
   application:
-    name: customer-service  # Nombre del microservicio
+    name: customer-service
 
-  # Configuración de base de datos reactiva
-  r2dbc:
-    url: r2dbc:mysql://localhost:3306/customer_db
+  # ========== CONFIGURACIÓN JPA + JDBC ==========
+  datasource:
+    url: jdbc:mysql://localhost:3306/customer_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: bank_user
     password: bank_password
-    pool:
-      initial-size: 10      # Conexiones iniciales
-      max-size: 20          # Máximo conexiones
-      validation-query: SELECT 1
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
-  # Configuración para ejecutar scripts SQL al inicio
+  # ========== CONFIGURACIÓN JPA/HIBERNATE ==========
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        show_sql: false
+    show-sql: false
+
+  # ========== CONFIGURACIÓN SQL SCRIPTS ==========
   sql:
     init:
-      mode: always          # Ejecutar scripts siempre
-      schema-locations: classpath:schema.sql  # Script de esquema
-      data-locations: classpath:data.sql      # Script de datos
+      mode: never
 
-# Configuración de logging
+# ========== LOGGING ==========
 logging:
   level:
-    com.bank.customer: DEBUG    # Nuestro código en DEBUG
-    io.r2dbc.mysql: INFO        # Driver R2DBC en INFO
-    org.springframework.r2dbc: DEBUG  # R2DBC de Spring en DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    com.bank.customer: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-# Configuración de actuator (monitoreo)
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics  # Endpoints expuestos
-  endpoint:
-    health:
-      show-details: always
+# ========== SWAGGER/OPENAPI CONFIGURATION ==========
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+  show-actuator: false
+
+# ========== INFORMACIÓN DE LA API ==========
+info:
+  app:
+    name: Customer Service
+    description: Microservicio para gestión de clientes bancarios
+    version: 1.0.0

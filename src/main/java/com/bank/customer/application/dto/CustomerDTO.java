@@ -2,6 +2,7 @@ package com.bank.customer.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,93 +10,50 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO para transferir datos de Customer en las respuestas de la API.
- *
- * Características:
- * - NO incluye contraseña (seguridad)
- * - Formato JSON controlado
- * - Independiente del modelo de dominio
- */
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // No incluir campos null en JSON
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(description = "DTO de respuesta con información del cliente")
 public class CustomerDTO {
 
-    /**
-     * ID único del cliente
-     */
+    @Schema(description = "ID único del cliente", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    /**
-     * Nombre completo del cliente
-     * Ejemplo: "Jose Lema"
-     */
-    private String nombre;
+    @Schema(description = "Nombre completo del cliente", example = "John Doe", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String name;
 
-    /**
-     * Género del cliente
-     * Valores esperados: "Masculino", "Femenino", "Otro"
-     */
-    private String genero;
+    @Schema(description = "Género del cliente", example = "Male", allowableValues = {"Male", "Female", "Other"})
+    private String gender;
 
-    /**
-     * Número de identificación (cédula, pasaporte)
-     * Ejemplo: "1234567890"
-     */
-    private String identificacion;
+    @Schema(description = "Número de identificación (cédula/pasaporte)", example = "1234567890", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String identification;
 
-    /**
-     * Dirección de residencia
-     * Ejemplo: "Otavalo sn y principal"
-     */
-    private String direccion;
+    @Schema(description = "Dirección de residencia", example = "123 Main St, City")
+    private String address;
 
-    /**
-     * Número de teléfono
-     * Ejemplo: "098254785"
-     */
-    private String telefono;
+    @Schema(description = "Número de teléfono", example = "0999999999", pattern = "^[0-9+\\-\\s()]{7,15}$")
+    private String phone;
 
-    /**
-     * Estado del cliente (activo/inactivo)
-     * true = activo, false = inactivo
-     */
-    private Boolean estado;
+    @Schema(description = "Estado del cliente (activo/inactivo)", example = "true")
+    private Boolean status;
 
-    /**
-     * Fecha de creación del registro
-     * Formato: "2025-10-14T10:30:00"
-     */
+    @Schema(description = "Fecha de creación del registro", example = "2025-10-19T10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
-    /**
-     * Fecha de última actualización
-     * Formato: "2025-10-14T10:30:00"
-     */
+    @Schema(description = "Fecha de última actualización", example = "2025-10-19T15:45:00", accessMode = Schema.AccessMode.READ_ONLY)
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    // ========== MÉTODOS DE UTILIDAD ==========
-
-    /**
-     * Verifica si el cliente está activo
-     * @return true si estado es true
-     */
+    // Métodos sin cambios
     public boolean isActive() {
-        return estado != null && estado;
+        return status != null && status;
     }
 
-    /**
-     * Obtiene resumen del cliente para logs
-     * @return string con información básica (sin datos sensibles)
-     */
     public String getSummary() {
-        return String.format("Customer[id=%d, nombre=%s, activo=%s]",
-                id, nombre, isActive());
+        return String.format("Customer[id=%d, name=%s, active=%s]",
+                id, name, isActive());
     }
 }

@@ -1,24 +1,41 @@
+// src/main/java/com/bank/customer/domain/repositories/CustomerRepository.java
 package com.bank.customer.domain.repositories;
 
-import com.bank.customer.domain.entities.Cliente;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import com.bank.customer.domain.entities.Customer;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Repository interface para Customer en el dominio.
+ * Define el contrato de acceso a datos sin depender de JPA.
+ *
+ * CAMBIO: Retorna tipos síncronos (Optional, List) en vez de reactivos (Mono, Flux)
+ */
 public interface CustomerRepository {
 
-    // Operaciones CRUD básicas reactivas
-    Mono<Cliente> save(Cliente customer);
+    // Guarda un cliente (crea o actualiza)
+    Customer save(Customer customer);
 
-    Mono<Cliente> findById(Long id);
+     // Busca un cliente por ID
+    Optional<Customer> findById(Long id);
 
-    Flux<Cliente> findAll();
+    // Obtiene todos los clientes
+    List<Customer> findAll();
 
-    Mono<Cliente> update(Cliente customer);
+    // Actualiza un cliente existente
+    Customer update(Customer customer);
 
-    Mono<Void> deleteById(Long id);
+    // Elimina un cliente por ID
+    void deleteById(Long id);
 
-    // Consultas de negocio - NO depende de Spring, R2DBC, JPA ni tecnologias externas
-    Mono<Boolean> existsByIdentificacion(String identificacion);
+    // Verifica si existe un cliente con la identificación dada
+    boolean existsByIdentificacion(String identificacion);
 
-    Mono<Cliente> findByIdentificacion(String identificacion);
+    //  Busca un cliente por identificación
+    Optional<Customer> findByIdentificacion(String identificacion);
+
+    boolean existsByIdentification(String identification);
+
+    Optional<Customer> findByIdentification(String identification);
 }

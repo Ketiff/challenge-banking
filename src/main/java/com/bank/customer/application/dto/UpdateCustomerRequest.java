@@ -1,5 +1,6 @@
 package com.bank.customer.application.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -7,69 +8,36 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO para recibir datos al actualizar un Customer existente.
- *
- * Características:
- * - TODOS los campos son opcionales (actualización parcial)
- * - Solo se actualizan los campos que vienen en el request
- * - Validaciones solo si el campo está presente
- * - NO permite cambiar identificación (campo inmutable)
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "DTO para actualizar un cliente existente (actualización parcial)")
 public class UpdateCustomerRequest {
 
-    /**
-     * Nombre completo del cliente
-     * Opcional, pero si viene debe tener entre 2 y 100 caracteres
-     */
-    @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
-    private String nombre;
+    @Schema(description = "Nombre completo del cliente", example = "Maria Lopez Updated", minLength = 2, maxLength = 100)
+    @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
+    private String name;
 
-    /**
-     * Género del cliente
-     * Opcional, máximo 20 caracteres
-     */
-    @Size(max = 20, message = "El género no puede exceder 20 caracteres")
-    private String genero;
+    @Schema(description = "Género del cliente", example = "Female", maxLength = 20)
+    @Size(max = 20, message = "Gender cannot exceed 20 characters")
+    private String gender;
 
-    /**
-     * Dirección de residencia
-     * Opcional, máximo 200 caracteres
-     */
-    @Size(max = 200, message = "La dirección no puede exceder 200 caracteres")
-    private String direccion;
+    @Schema(description = "Dirección de residencia", example = "Quito, La Carolina", maxLength = 200)
+    @Size(max = 200, message = "Address cannot exceed 200 characters")
+    private String address;
 
-    /**
-     * Número de teléfono
-     * Opcional, formato flexible
-     */
+    @Schema(description = "Número de teléfono", example = "0988888888", pattern = "^[0-9+\\-\\s()]{7,15}$")
     @Pattern(
             regexp = "^[0-9+\\-\\s()]{7,15}$",
-            message = "Formato de teléfono inválido"
+            message = "Invalid phone format"
     )
-    private String telefono;
+    private String phone;
 
-    /**
-     * Nueva contraseña del cliente
-     * Opcional, pero si viene debe tener entre 4 y 255 caracteres
-     * TODO: En producción, usar hash bcrypt
-     */
-    @Size(min = 4, max = 255, message = "La contraseña debe tener entre 4 y 255 caracteres")
-    private String contrasena;
+    @Schema(description = "Nueva contraseña", example = "newPassword456", minLength = 4, maxLength = 255, format = "password")
+    @Size(min = 4, max = 255, message = "Password must be between 4 and 255 characters")
+    private String password;
 
-    /**
-     * Estado del cliente (activo/inactivo)
-     * Opcional, permite activar/desactivar
-     */
-    private Boolean estado;
-
-    // NOTAS IMPORTANTES:
-    // - NO incluimos 'id' (viene en la URL: PUT /customers/{id})
-    // - NO incluimos 'identificacion' (campo inmutable, no se puede cambiar)
-    // - NO incluimos timestamps (se actualizan automáticamente)
-    // - Todos los campos son opcionales (actualización parcial)
+    @Schema(description = "Estado del cliente", example = "true")
+    private Boolean status;
 }
